@@ -45,10 +45,7 @@ public class TransacaoRepositoryImpl implements TransacaoRepository {
     }
 
     private String formatarNumeroCartao(String ultimosDigitos) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("**** **** **** ");
-        sb.append(ultimosDigitos);
-        return sb.toString();
+        return "**** **** **** " + ultimosDigitos;
     }
 
     @Override
@@ -60,13 +57,11 @@ public class TransacaoRepositoryImpl implements TransacaoRepository {
                 .ifPresent(mp -> query.addCriteria(Criteria.where("metodoPagamento").is(mp)));
         Optional.ofNullable(nomePortadorCartao)
                 .ifPresent(np -> query.addCriteria(Criteria.where("nomePortadorCartao").regex(np, "i")));
-
         try {
             List<TransacaoModel> transacoes = mongoTemplate.find(query, TransacaoModel.class);
             return transacoes.stream().map(transacaoMapper::modelToDtoResponse).collect(Collectors.toList());
         } catch (Exception e) {
             throw new CustomException(HttpStatus.INTERNAL_SERVER_ERROR, "Erro ao buscar transações: " + e.getMessage());
-
         }
     }
 
